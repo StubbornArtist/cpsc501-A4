@@ -18,8 +18,8 @@ class FDMConvolver {
 			vector<ComplexNumber *> xC  = getComplex(x);
 			vector<ComplexNumber *> hC  = getComplex(h);
 
-			xC = transform.inplacefft(xC);
-			hC = transform.inplacefft(hC);
+			xC = transform.fft(xC);
+			hC = transform.fft(hC);
 
 			vector<ComplexNumber *> result = multiplySignal(xC, hC, P);
 			xC.erase(xC.begin(), xC.end());

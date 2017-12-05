@@ -2,7 +2,6 @@
 #include "ComplexNumber.cpp"
 #include <vector>
 #include <math.h>
-//#include <intrin.h> 
 	
 #define PI 3.14159265359
 using namespace std;
@@ -26,17 +25,6 @@ class FFT {
 			return reverse;
 		}
 
-		int count_trailing_zeros(int num) {
-			int size = sizeof(num) * 8;
-			int temp = num;
-			for (int i = 0;  i < size; i++, temp = temp >> 1) {
-				if (temp & 1) {
-					return i;
-				}
-			}
-		}
-
-
 		int count_leading_zeros(int num) {
 			int temp = num;
 			int count = 0;
@@ -50,36 +38,7 @@ class FFT {
 
 
 	public:
-		vector<ComplexNumber *>  fft(vector<ComplexNumber *> x) {
-			int n = x.size();
-
-			if (n == 1) return vector<ComplexNumber *>{ x[0] };
-
-			vector<ComplexNumber *> even = vector<ComplexNumber *>();
-			vector<ComplexNumber *> odd = vector<ComplexNumber *>();
-			vector<ComplexNumber *> combined = vector<ComplexNumber *>(n, 0);
-
-			for (int i = 0; i < n; i+=2) {
-				even.push_back(x[i]);
-				odd.push_back(x[i + 1]);
-			}
-
-			even = fft(even);
-			odd = fft(odd);
-
-			for (int i = 0; i < (n/2); i++) {
-				double k = -2.0 * i *  PI / n;
-				ComplexNumber * wk = new ComplexNumber(cos(k), sin(k));
-				wk = wk->multiply(*odd[i]);
-				combined[i] = even[i]->add(*wk);
-				combined[i + (n/2)] = (even[i]->subtract(*wk));
-				delete wk;
-			}
-
-			return combined;
-		}
-
-		vector<ComplexNumber *> inplacefft(vector<ComplexNumber *> x) {
+		vector<ComplexNumber *> fft(vector<ComplexNumber *> x) {
 			int n = x.size();
 
 			if (n == 0) throw "Cannot use zero length vector";
@@ -118,7 +77,7 @@ class FFT {
 				y.push_back(x[i]->conjugate());
 			}
 
-			y = inplacefft(y);
+			y = fft(y);
 			double inverseN = 1.0 / n;
 
 			for (int i = 0; i < n; i++) {
