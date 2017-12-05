@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "AudioFile.cpp"
 
-class Convolver {
+//class Convolver {
 
-	public:
-		AudioFile virtual convolve(AudioFile sound, AudioFile IRsound);
-};
+	//public:
+		//virtual float * convolve(float x[], int N, float h[], int M);
+//};
