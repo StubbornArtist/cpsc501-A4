@@ -120,4 +120,6 @@ class AudioFile {
 		 int getNumSamples() {
 			 return numSamples;
 		 }
+
+		 ~AudioFile() {}
 };

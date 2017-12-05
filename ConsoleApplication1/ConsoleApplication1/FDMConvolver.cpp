@@ -5,45 +5,39 @@ using namespace std;
 class FDMConvolver {
 
 	public:
-		vector<double> convolve(vector<double> x, vector<double> h) {
+		void convolve(vector<double> x, vector<double> h, vector<double> * y){
 			FFT transform;
 			int P, origP;
+			vector<ComplexNumber *> xC, hC;
+
 			P = origP = x.size() + h.size() - 1;
 			if (!power_of_two(P)) 
 				P = pow(2, next_power_of_two(P));
 
-			x= pad(x, P);
-			h= pad(h, P);
+			pad(&x, P);
+			pad(&h, P);
 
-			vector<ComplexNumber *> xC  = getComplex(x);
-			vector<ComplexNumber *> hC  = getComplex(h);
+			getComplex(x, &xC);
+			getComplex(h, &hC);
 
-			xC = transform.fft(xC);
-			hC = transform.fft(hC);
+			transform.fft(&xC);
+			transform.fft(&hC);
 
-			vector<ComplexNumber *> result = multiplySignal(xC, hC, P);
+			multiplySignals(&xC, hC);
+			transform.ifft(&xC);
+			getReal(xC, y, origP);
+
 			xC.erase(xC.begin(), xC.end());
 			hC.erase(hC.begin(), hC.end());
-
-			result = transform.ifft(result);
-
-			vector<double> realResult = getReal(result, origP);
-
-			result.erase(result.begin(), result.end());
-
-			return realResult;
 		}
 
 	private:
-		vector<double> pad(vector<double> array, int desiredLength) {
-			vector<double> result = array;
-			int numToAdd = desiredLength - array.size();
-
+		void pad(vector<double> * array, int desiredLength) {
+			int numToAdd;
+			numToAdd = desiredLength - array->size();
 			for (int i = 0; i < numToAdd; i++) {
-				result.push_back(0.0);
+				array->push_back(0.0);
 			}
-
-			return result;
 		}
 
 		bool power_of_two(int num) {
@@ -53,33 +47,27 @@ class FDMConvolver {
 		int next_power_of_two(int num) {
 			return ceil(log2(num));
 		}
-		vector<ComplexNumber *> multiplySignal(vector<ComplexNumber *> x, vector<ComplexNumber *> h, int size) {
-			vector<ComplexNumber *> result = vector<ComplexNumber *>();
+		void multiplySignals(vector<ComplexNumber *> * x, vector<ComplexNumber *> h) {
+			int n = x->size();
 
-			for (int i = 0; i < size; i++) {
-				result.push_back(x[i]->multiply(*h[i]));
+			for (int i = 0; i < n; i++) {
+				ComplexNumber * temp = (*x)[i];
+				(*x)[i] = temp->multiply(*h[i]);
+				delete temp;
 			}
-
-			return result;
 		}
 
-		vector<ComplexNumber *> getComplex(vector<double> real) {
-			vector<ComplexNumber *> result = vector<ComplexNumber *>();
+		void getComplex(vector<double> real, vector<ComplexNumber *> * complex) {
 
 			for (int i = 0; i < real.size(); i++) {
-				result.push_back(new ComplexNumber(real[i]));
+				complex->push_back(new ComplexNumber(real[i]));
 			}
-			return result;
 		}
 
-		vector<double> getReal(vector<ComplexNumber *> complex, int size) {
-			vector<double> result = vector<double>();
-
+		void getReal(vector<ComplexNumber *> complex, vector<double> * real, int size) {
 			for (int i = 0; i < size; i++) {
-				result.push_back(complex[i]->getReal());
+				real->push_back(complex[i]->getReal());
 			}
-
-			return result;
 		}
 
 };

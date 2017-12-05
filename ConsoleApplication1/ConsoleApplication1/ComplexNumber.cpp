@@ -15,25 +15,32 @@ class ComplexNumber {
 		ComplexNumber() : ComplexNumber(0.0){}
 
 		ComplexNumber * multiply(ComplexNumber other) {
-			double real = (this->real * other.getReal()) - (this->imaginary * other.getImaginary());
-			double imaginary = (this->real * other.getImaginary()) + (this->imaginary * other.getReal());
-			return new ComplexNumber(real, imaginary);
+			double real, imaginary;
+			real = (this->real * other.getReal()) - (this->imaginary * other.getImaginary());
+			imaginary = (this->real * other.getImaginary()) + (this->imaginary * other.getReal());
+			ComplexNumber * result =  new ComplexNumber(real, imaginary);
+
+			return result;
 		}
 
 		ComplexNumber * add(ComplexNumber other) {
-			return new ComplexNumber(other.getReal() + this->real, other.getImaginary() + this->imaginary);
+			ComplexNumber * result = new ComplexNumber(other.getReal() + this->real, other.getImaginary() + this->imaginary);
+			return result;
 		}
 
 		ComplexNumber * subtract(ComplexNumber other) {
-			return new ComplexNumber(this->real - other.getReal(), this->imaginary - other.getImaginary());
+			ComplexNumber * result = new ComplexNumber(this->real - other.getReal(), this->imaginary - other.getImaginary());
+			return result;
 		}
 
 		ComplexNumber * conjugate() {
-			return new ComplexNumber(this->real, -1.0 * this->imaginary);
+			ComplexNumber * result = new ComplexNumber(this->real, -1.0 * this->imaginary);
+			return result;
 		}
 
 		ComplexNumber * multiply(double scalar) {
-			return new ComplexNumber(this->real * scalar, this->imaginary * scalar);
+			ComplexNumber * result = new ComplexNumber(this->real * scalar, this->imaginary * scalar);
+			return result;
 		}
 
 		double getReal() {
@@ -43,4 +50,5 @@ class ComplexNumber {
 		double getImaginary() {
 			return imaginary;
 		}
+		~ComplexNumber() {}
 };

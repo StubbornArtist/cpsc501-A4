@@ -12,80 +12,92 @@ class FFT {
 	private:
 
 		int reverse_integer(int num) {
-			int temp = num;
-			int reverse = 0;
-			int size = sizeof(int) * 8;
+			int temp, reverse, size;
+			temp = num;
+			reverse = 0;
+			size = sizeof(int) * 8;
 
 			for (int i = 0; i < size; i++) {
 				reverse <<= 1;
 				reverse |= (temp & 1);
 				temp >>= 1;
 			}
-
 			return reverse;
 		}
 
 		int count_leading_zeros(int num) {
-			int temp = num;
-			int count = 0;
-			while (temp >= 0) {
-				temp = temp << 1;
+			int temp, count;
+			temp = num;
+			count = 0;
+			while (temp > 0) {
+				temp = temp >> 1;
 				count++;
 			}
-
-			return count;
+			return (sizeof(int) * 8 )-count;
 		}
 
 
 	public:
-		vector<ComplexNumber *> fft(vector<ComplexNumber *> x) {
-			int n = x.size();
+		void fft(vector<ComplexNumber *> * x) {
+			int n, shift;
+			ComplexNumber * temp;
+			ComplexNumber * temp2;
+			double kth;
+			n= x->size();
 
-			if (n == 0) throw "Cannot use zero length vector";
-
-			int shift = 1 + count_leading_zeros(n);
+			shift = 1 + count_leading_zeros(n);
 			for (int i = 0; i < n; i++) {
-				int j = (unsigned int)reverse_integer(i) >> shift;
+				unsigned int j = (unsigned int)reverse_integer(i) >> shift;
 				if (j > i) {
-					ComplexNumber * temp = x[j];
-					x[j] = x[i];
-					x[i] = temp;
+					temp = (*x)[j];
+					(*x)[j] = (*x)[i];
+					(*x)[i] = temp;
 				}
 			}
-
 	
 			for (int i = 2; i <= n; i = i + i) {
 				for (int k = 0; k < (i / 2); k++) {
-					double kth = -2.0 * k * PI / i;
+					kth = -2.0 * k * PI / i;
 					ComplexNumber * wk = new ComplexNumber(cos(kth), sin(kth));
 					for (int j = 0; j < (n / i); j++) {
-						ComplexNumber * t = wk->multiply(*x[j*i + k + i/2]);
-						x[j*i + k + i/2] = x[j * i + k]->subtract(*t);
-						x[j*i + k] = x[j * i + k]->add(*t);
+						temp = wk->multiply(*(*x)[j*i + k + i/2]);
+						delete (*x)[j*i + k + i / 2];
+						(*x)[j*i + k + i / 2] = (*x)[j * i + k]->subtract(*temp);
+						temp2 = (*x)[j*i + k];
+						(*x)[j*i + k] = (*x)[j * i + k]->add(*temp);
+						delete temp2;
+						delete temp;
 					}
+					delete wk;
 				}
 			}
 
-			return x;
 		}
 
-		vector<ComplexNumber *> ifft(vector<ComplexNumber *> x) {
-			int n = x.size();
-			vector<ComplexNumber *> y = vector<ComplexNumber *>();
+		void ifft(vector<ComplexNumber *> * x) {
+			int n;
+			double inverseN;
+
+			n = x->size();
+			inverseN = 1.0 / n;
 
 			for (int i = 0; i < n; i++) {
-				y.push_back(x[i]->conjugate());
+				ComplexNumber * temp = (*x)[i];
+				(*x)[i] = temp->conjugate();
+				delete temp;
 			}
 
-			y = fft(y);
-			double inverseN = 1.0 / n;
+			fft(x);
 
 			for (int i = 0; i < n; i++) {
-				ComplexNumber * conj = y[i]->conjugate();
-				y[i] = conj->multiply(inverseN);
+				ComplexNumber * temp = (*x)[i];
+				ComplexNumber * conj = (*x)[i]->conjugate();
+				(*x)[i] = conj->multiply(inverseN);
+				delete temp;
+				delete conj;
 			}
 
-			return y;
 		}
 
+		~FFT(){}
 };
