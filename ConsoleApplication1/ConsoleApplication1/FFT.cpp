@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ComplexNumber.cpp"
 #include <vector>
 #include <math.h>

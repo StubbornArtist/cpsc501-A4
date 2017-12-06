@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "FFT.cpp"
 using namespace std;
 

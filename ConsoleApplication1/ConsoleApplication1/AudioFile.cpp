@@ -1,10 +1,15 @@
-#include "stdafx.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include <vector>
+#include <math.h>
+#include <string.h>
 
 #define RIFF "RIFF"
 #define WAVE "WAVE"
 #define FMT "fmt "
 #define DATA "data"
+#define fopen_s(fp, fmt, mode)          *(fp)=fopen( (fmt), (mode))
+
 using namespace std;
 
 
@@ -38,10 +43,9 @@ class AudioFile {
 	public:
 
 		void fromFile(char * path) {
-			FILE * fp;
-			fopen_s(&fp, path, "rb");
+			FILE * fp = fopen(path, "r");
 
-			fread(chunkId, 1, 4, fp);
+			fread(chunkId, sizeof(unsigned char), 4, fp);
 			fread(&chunkSize, 4, 1, fp);
 			fread(format, 1, 4, fp);
 			fread(subChunk1Id, 1, 4, fp);
@@ -68,8 +72,7 @@ class AudioFile {
 		}
 
 		void toFile(char * path) {
-			FILE * fp;
-			fopen_s(&fp, path, "wb");
+			FILE * fp= fopen(path, "w");
 
 			fwrite(chunkId, 1, 4, fp);
 			fwrite(&chunkSize, 4, 1, fp);

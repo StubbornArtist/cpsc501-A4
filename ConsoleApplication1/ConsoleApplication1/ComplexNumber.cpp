@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdlib.h>
 
 class ComplexNumber {
 
