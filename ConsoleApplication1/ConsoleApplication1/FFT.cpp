@@ -53,7 +53,7 @@ class FFT {
 					(*x)[i] = temp;
 				}
 			}
-	
+			//minimize array references
 			for (int i = 2; i <= n; i = i + i) {
 				for (int k = 0; k < (i / 2); k++) {
 					kth = -2.0 * k * PI / i;

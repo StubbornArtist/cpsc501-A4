@@ -8,7 +8,6 @@
 #define WAVE "WAVE"
 #define FMT "fmt "
 #define DATA "data"
-#define fopen_s(fp, fmt, mode)          *(fp)=fopen( (fmt), (mode))
 
 using namespace std;
 

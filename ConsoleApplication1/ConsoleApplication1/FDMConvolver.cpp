@@ -16,8 +16,11 @@ class FDMConvolver {
 			pad(&x, P);
 			pad(&h, P);
 
-			getComplex(x, &xC);
-			getComplex(h, &hC);
+			//jamming/fusion code tuning
+			for (int i = 0; i < x.size(); i++) {
+				xC.push_back(new ComplexNumber(x[i]));
+				hC.push_back(new ComplexNumber(h[i]));
+			}
 
 			transform.fft(&xC);
 			transform.fft(&hC);
@@ -38,11 +41,11 @@ class FDMConvolver {
 				array->push_back(0.0);
 			}
 		}
-
+		//inline routine
 		bool power_of_two(int num) {
 			return !(num == 0) && !(num && (num - 1));
 		}
-
+		//inline routine
 		int next_power_of_two(int num) {
 			return ceil(log2(num));
 		}
@@ -53,13 +56,6 @@ class FDMConvolver {
 				ComplexNumber * temp = (*x)[i];
 				(*x)[i] = temp->multiply(*h[i]);
 				delete temp;
-			}
-		}
-
-		void getComplex(vector<double> real, vector<ComplexNumber *> * complex) {
-
-			for (int i = 0; i < real.size(); i++) {
-				complex->push_back(new ComplexNumber(real[i]));
 			}
 		}
 
