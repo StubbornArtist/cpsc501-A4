@@ -1,4 +1,6 @@
 #include "FFT.cpp"
+
+#define POWOF2(N) (!(N == 0) && !(N && (N - 1))? true: false)
 using namespace std;
 
 class FDMConvolver {
@@ -10,7 +12,7 @@ class FDMConvolver {
 			vector<ComplexNumber *> xC, hC;
 
 			P = origP = x.size() + h.size() - 1;
-			if (!power_of_two(P)) 
+			if (!POWOF2(P)) 
 				P = pow(2, next_power_of_two(P));
 
 			pad(&x, P);
@@ -46,7 +48,7 @@ class FDMConvolver {
 			return !(num == 0) && !(num && (num - 1));
 		}
 		//inline routine
-		int next_power_of_two(int num) {
+		inline int next_power_of_two(int num) {
 			return ceil(log2(num));
 		}
 		void multiplySignals(vector<ComplexNumber *> * x, vector<ComplexNumber *> h) {
