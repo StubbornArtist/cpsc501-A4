@@ -27,8 +27,8 @@ class FDMConvolver {
 			transform.fft(&xC);
 			transform.fft(&hC);
 
-			multiplySignals(&xC, hC);
-			transform.ifft(&xC);
+
+			transform.ifft(&xC, &hC);
 			getReal(xC, y, origP);
 
 			xC.erase(xC.begin(), xC.end());
@@ -43,22 +43,9 @@ class FDMConvolver {
 				array->push_back(0.0);
 			}
 		}
-		//inline routine
-		bool power_of_two(int num) {
-			return !(num == 0) && !(num && (num - 1));
-		}
-		//inline routine
+
 		inline int next_power_of_two(int num) {
 			return ceil(log2(num));
-		}
-		void multiplySignals(vector<ComplexNumber *> * x, vector<ComplexNumber *> h) {
-			int n = x->size();
-
-			for (int i = 0; i < n; i++) {
-				ComplexNumber * temp = (*x)[i];
-				(*x)[i] = temp->multiply(*h[i]);
-				delete temp;
-			}
 		}
 
 		void getReal(vector<ComplexNumber *> complex, vector<double> * real, int size) {

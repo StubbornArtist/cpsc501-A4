@@ -5,6 +5,10 @@
 #define PI 3.14159265359
 using namespace std;
 
+/*This code was based on the algorithms written in Java from the following sources:
+	https://introcs.cs.princeton.edu/java/97data/InplaceFFT.java.html
+	https://introcs.cs.princeton.edu/java/97data/FFT.java.html
+*/
 class FFT {
 		
 
@@ -53,10 +57,11 @@ class FFT {
 					(*x)[i] = temp;
 				}
 			}
-			//minimize array references
+			double two_pi = -2.0 * PI;
+
 			for (int i = 2; i <= n; i = i + i) {
 				for (int k = 0; k < (i / 2); k++) {
-					kth = -2.0 * k * PI / i;
+					kth = two_pi * k  / i;
 					ComplexNumber * wk = new ComplexNumber(cos(kth), sin(kth));
 					for (int j = 0; j < (n / i); j++) {
 						temp = wk->multiply(*(*x)[j*i + k + i/2]);
@@ -73,7 +78,7 @@ class FFT {
 
 		}
 
-		void ifft(vector<ComplexNumber *> * x) {
+		void ifft(vector<ComplexNumber *> * x, vector<ComplexNumber *> * h) {
 			int n;
 			double inverseN;
 
@@ -82,8 +87,10 @@ class FFT {
 
 			for (int i = 0; i < n; i++) {
 				ComplexNumber * temp = (*x)[i];
-				(*x)[i] = temp->conjugate();
+				ComplexNumber * prod = temp->multiply(*(*h)[i]);
+				(*x)[i] = prod->conjugate();
 				delete temp;
+				delete prod;
 			}
 
 			fft(x);
